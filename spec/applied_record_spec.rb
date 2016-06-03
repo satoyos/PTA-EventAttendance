@@ -10,7 +10,7 @@ describe "AppledRecord" do
     end
     context '初期化データを与えて場合' do
       let(:record){AppliedRecord.new(
-          name: '○○○子', parent_name: '○○×男', class: '阪急', number_in_class: 5, comment: '三冠王',
+          name: '○○○子', parent_name: '○○×男', class_name: '阪急', number_in_class: 5, comment: '三冠王',
           presence: true, number_to_come: 1
       )}
       it 'should be a valid object' do
@@ -19,7 +19,7 @@ describe "AppledRecord" do
       it '初期化時に与えたデータが、パラメータとして設定されている' do
         expect(record.name).to eq '○○○子'
         expect(record.parent_name).to eq '○○×男'
-        expect(record.class).to eq '阪急'
+        expect(record.class_name).to eq '阪急'
         expect(record.number_in_class).to be 5
         expect(record.presence).to be true
         expect(record.number_to_come).to be 1
