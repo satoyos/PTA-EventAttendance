@@ -42,7 +42,7 @@ class Classroom
     guessed_student = nil
     students.each do |st|
       penalty =
-          (given_str(class_name, name, num_str).unpack('C*') -
+          (given_str(class_name, name.gsub(/　/, ''), num_str).unpack('C*') -
            correct_str(st).unpack('C*')).size
       if penalty < min_penalty
         min_penalty = penalty

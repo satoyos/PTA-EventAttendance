@@ -79,6 +79,18 @@ describe 'Classroom' do
           expect(penalty).to be 3
         end
       end
+      context '名前に全角スペースや半角スペースが混じっている場合' do
+        it '全角スペースは削除するので、ペナルティは0' do
+          student, penalty = class_ht.guess_who(class_name: '阪神', number: 12, name: '吉田　義男　')
+          expect(student.number_in_class).to be 12
+          expect(penalty).to be 0
+        end
+        it '半角スペースも削除するので、やっぱりペナルティは0' do
+          student, penalty = class_ht.guess_who(class_name: '阪神', number: 12, name: '吉田 義男')
+          expect(student.number_in_class).to be 12
+          expect(penalty).to be 0
+        end
+      end
     end
   end
 
