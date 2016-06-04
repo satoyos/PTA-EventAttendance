@@ -78,5 +78,11 @@ describe 'RecordsFixer' do
     it '3番目のレコードまでは、全てペナルティ0' do
       expect(fixer.records[0..2].map{|r| r.penalty}).to eq [0, 0, 0]
     end
+    it '4番目のレコードは、出席番号が違うし名前も一文字間違っているが、問題ない' do
+      fixer.records[3].correct_student.tap do |fourth_st|
+        expect(fourth_st.number_in_class).to be 5
+        expect(fourth_st.name).to eq 'サムソン・リー'
+      end
+    end
   end
 end
