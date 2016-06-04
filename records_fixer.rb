@@ -2,13 +2,20 @@
 
 require_relative 'handle_csv_from_excel'
 require_relative 'applied_record'
+require_relative 'peer'
+require 'json'
 
 class RecordsFixer
-  attr_reader :records
+  attr_reader :records, :peer
 
   def initialize(record_csv_path: nil)
     return unless record_csv_path
     @records = records_from_csv(record_csv_path)
+  end
+
+  def fetch_correct_peer_data(peer_name, files_path_json: nil)
+    @peer = Peer.new(peer_name)
+    set_classes_to_peer(peer, data_source_json: files_path_json)
   end
 
   private
@@ -52,6 +59,21 @@ class RecordsFixer
       else ; raise "文字列[#{m[1]}]から数字を抽出できません。"
     end
   end
+
+  def set_classes_to_peer(peer, data_source_json: nil)
+    raise 'Peerオブジェクトを引数で指定してください。' unless peer.is_a? Peer
+    raise '引数で、クラス名簿ファイルのパスが記述されたJSONファイルを指定してください。' unless data_source_json
+    raise "指定されたパスのファイルが見つかりません。[#{data_source_json}]" unless File.exist? data_source_json
+    open(data_source_json, 'r:utf-8') do |infile|
+      json = JSON.parse(infile.read, symbolize_names: true)
+      json.each do |hash|
+        peer.add_class(Classroom.create_from_member_txt(hash[:file_path],
+                                                        class_name: hash[:class_name]))
+      end
+    end
+
+  end
+
 
 
 end

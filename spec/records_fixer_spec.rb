@@ -32,4 +32,21 @@ describe 'RecordsFixer' do
       end
     end
   end
+
+  describe '#fetch_correct_peer_data' do
+    let(:fixer){RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv')}
+    before do
+      fixer.fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json')
+    end
+    it 'gets peer data from given file' do
+      fixer.peer.tap do |p|
+        expect(p).to be_a Peer
+        expect(p.classes.size).to be 3
+        p.classes.first.tap do |first_class|
+          expect(first_class).to be_a Classroom
+          expect(first_class.students.size).to be 23
+        end
+      end
+    end
+  end
 end

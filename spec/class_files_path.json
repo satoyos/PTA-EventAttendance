@@ -1,0 +1,14 @@
+[
+  {
+    "class_name" : "中日",
+    "file_path"  : "spec/member_cd1999.txt"
+  },
+  {
+    "class_name" : "阪神",
+    "file_path"  : "spec/member_ht1985.txt"
+  },
+  {
+    "class_name" : "巨人",
+    "file_path"  : "spec/member_yg1973.txt"
+  }
+]
