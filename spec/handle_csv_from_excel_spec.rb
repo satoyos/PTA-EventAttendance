@@ -16,7 +16,7 @@ describe '初期化' do
   end
   let(:csv){handler.csv}
   it 'データの中に改行が入っていても、きちんと一つのデータとしてくれている。' do
-    expect(csv.size).to be 3
+    expect(csv.size).to be 4
   end
   it 'ヘッダ行をうまく読み込めている' do
     csv.headers.tap do |h|
