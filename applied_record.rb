@@ -6,7 +6,7 @@ class AppliedRecord
   include InitWithHash
 
   attr_accessor :name, :parent_name, :class_name, :number_in_class, :presence
-  attr_accessor :number_to_come, :comment
+  attr_accessor :attendee_number, :comment
   attr_accessor :correct_student
 
 end

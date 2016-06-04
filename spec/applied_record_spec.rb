@@ -11,7 +11,7 @@ describe "AppledRecord" do
     context '初期化データを与えて場合' do
       let(:record){AppliedRecord.new(
           name: '○○○子', parent_name: '○○×男', class_name: '阪急', number_in_class: 5, comment: '三冠王',
-          presence: true, number_to_come: 1
+          presence: true, attendee_number: 1
       )}
       it 'should be a valid object' do
         expect(record).to be_an AppliedRecord
@@ -22,7 +22,7 @@ describe "AppledRecord" do
         expect(record.class_name).to eq '阪急'
         expect(record.number_in_class).to be 5
         expect(record.presence).to be true
-        expect(record.number_to_come).to be 1
+        expect(record.attendee_number).to be 1
         expect(record.comment).to eq '三冠王'
       end
       it '初期化時には、「正しい生徒」を表すプロパティの値は居設定' do
