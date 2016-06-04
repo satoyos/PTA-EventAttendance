@@ -8,6 +8,6 @@ class AppliedRecord
 
   attr_accessor :name, :parent_name, :class_name, :number_in_class, :presence
   attr_accessor :attendee_number, :comment, :date
-  attr_accessor :correct_student
+  attr_accessor :correct_student, :penalty
 
 end

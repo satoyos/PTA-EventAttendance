@@ -16,6 +16,15 @@ class RecordsFixer
   def fetch_correct_peer_data(peer_name, files_path_json: nil)
     @peer = Peer.new(peer_name)
     set_classes_to_peer(peer, data_source_json: files_path_json)
+    self
+  end
+
+  def guess_students
+    records.each do |rec|
+      rec.correct_student, rec.penalty =
+          peer.guess_who(class_name: rec.class_name, number: rec.number_in_class, name: rec.name)
+    end
+    self
   end
 
   private
