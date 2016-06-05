@@ -70,4 +70,27 @@ describe 'Peer' do
       end
     end
   end
+
+  describe '#fetch_student_of' do
+    let(:peer){Peer.new('セ・リーグ')}
+    before do
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_TIGERS,  class_name: '阪神'))
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_DRAGONS, class_name: '中日'))
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_GIANTS,  class_name: '巨人'))
+    end
+    context '正しい条件を与えられたとき' do
+      it '条件に見合った生徒を返す' do
+        peer.fetch_student_of(class_name: '阪神', number_in_class: 5).tap do |st|
+          expect(st).to be_a Student
+          expect(st.name).to eq '岡田彰布'
+        end
+      end
+    end
+    context 'クラス名や出席番号が間違っているとき' do
+      it '例外が発生する' do
+        expect{peer.fetch_student_of(class_name: '阪急', number_in_class: 5)}.to raise_error RuntimeError
+        expect{peer.fetch_student_of(class_name: '阪神', number_in_class: 50)}.to raise_error RuntimeError
+      end
+    end
+  end
 end
