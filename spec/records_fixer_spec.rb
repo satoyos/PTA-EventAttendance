@@ -16,7 +16,7 @@ describe 'RecordsFixer' do
       it '出欠レコードを与えられたファイルから読み込んでいる' do
         fixer.records.tap do |recs|
           expect(recs).to be_an Array
-          # expect(recs.size).to be 3
+          expect(recs.size).to be 4
           recs.first.tap do |r|
             expect(r).to be_an AppliedRecord
             expect(r.name).to eq '山田洋'
@@ -83,6 +83,56 @@ describe 'RecordsFixer' do
         expect(fourth_st.number_in_class).to be 5
         expect(fourth_st.name).to eq 'サムソン・リー'
       end
+    end
+  end
+
+  describe '#save_confirmed_history' do
+    TEST01_HISTORY_JSON = 'spec/test01_confirm_history.json'
+    let(:fixer){
+      RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
+          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+          guess_students
+    }
+    it 'save history file' do
+      File.delete TEST01_HISTORY_JSON if File.exist? TEST01_HISTORY_JSON
+      expect(File.exist? TEST01_HISTORY_JSON).to be false  # At first, test_save_data is removed
+      fixer.save_confirmed_history(TEST01_HISTORY_JSON)
+      expect(File.exist? TEST01_HISTORY_JSON).to be true
+    end
+  end
+
+  describe 'load_and_check_confirmed_data' do
+    before do
+      RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
+          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+          guess_students.
+          save_confirmed_history(TEST01_HISTORY_JSON)
+    end
+    let(:fixer){
+      RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
+          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json')
+    }
+    context 'ダウンロードしてきたCSVのデータと、保存していた確認済みJSONのデータに食い違いが無いとき' do
+      it '自分自身を返し、レコードには該当するStudentオブジェクトがセットされている' do
+        expect(fixer.records.first.correct_student).to be nil
+        expect(fixer.load_and_check_confirmed_data(TEST01_HISTORY_JSON)).to be_a RecordsFixer
+        fixer.records.first.correct_student.tap do |first_st|
+          expect(first_st).to be_a Student
+          expect(first_st.name).to eq '山田洋'
+        end
+      end
+    end
+    context 'ダウンロードしてきたCSVの2番目のデータが1行欠けていたとき' do
+      it '例外が発生する' do
+        expect{
+            RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-wrong.csv').
+                fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+                load_and_check_confirmed_data(TEST01_HISTORY_JSON)
+        }.to raise_error RuntimeError
+      end
+    end
+    context 'ダウンロードしてきたCSVのデータの順番が入れ替わっていたとき' do
+      #%ToDo: ここから！
     end
   end
 end

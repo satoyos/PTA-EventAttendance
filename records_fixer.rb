@@ -27,7 +27,38 @@ class RecordsFixer
     self
   end
 
+  def save_confirmed_history(out_json_path)
+    raise '確認済みデータを出力するファイルのパスを引数で指定してください。' unless out_json_path
+    array_to_save = records.map{|rec| hash_to_save_from(rec)}
+    File.open(out_json_path, 'w:utf-8') do |outfile|
+      outfile.puts(JSON.pretty_generate(array_to_save))
+    end
+    self
+  end
+
+
+  def load_and_check_confirmed_data(in_json_path)
+    hashes_from_json = get_hashes_from(in_json_path)
+    raise 'CSVのデータ数が明らかに少ない！' if hashes_from_json.size > records.size
+    get_hashes_from(in_json_path).each_with_index do |hash, idx|
+      student_hash = hash[:correct_student]
+      loaded_student = peer.fetch_student_of(class_name: student_hash[:class_name],
+                                             number_in_class: student_hash[:number_in_class])
+      records[idx].correct_student = loaded_student
+    end
+
+    self
+  end
+
   private
+
+  def get_hashes_from(in_json_path)
+    raise '読み込む「確認済みJSONデータファイル」のパスを引数で指定してください。' unless in_json_path
+    raise "与えられたパスのファイルが見つかりません。[#{in_json_path}]" unless File.exist? in_json_path
+    load_str = nil
+    open(in_json_path, 'r:utf-8'){|f| load_str = f.read}
+    JSON.parse(load_str, symbolize_names: true)
+  end
 
   def records_from_csv(csv_path)
     raise '出欠登録レコードCSVのパスを引数で指定してください。' unless csv_path
@@ -80,9 +111,20 @@ class RecordsFixer
                                                         class_name: hash[:class_name]))
       end
     end
-
   end
 
-
-
+  def hash_to_save_from(record)
+    {
+        applied_record: {
+          class_name: record.class_name,
+          number_in_class: record.number_in_class,
+          name: record.name
+        },
+        correct_student: {
+            class_name: record.correct_student.class_name,
+            number_in_class: record.correct_student.number_in_class,
+            name: record.correct_student.name
+        }
+    }
+  end
 end
