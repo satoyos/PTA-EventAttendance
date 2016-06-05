@@ -1,6 +1,6 @@
 require_relative '../applied_record'
 
-describe "AppledRecord" do
+describe 'AppliedRecord' do
   describe '初期化' do
     context '引数無し' do
       let(:record){AppliedRecord.new}
