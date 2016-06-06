@@ -36,12 +36,12 @@ describe 'student' do
     end
   end
 
-  describe '#eql?' do
+  describe '#==' do
     sample_class = 'B組'
     let(:st1){Student.new(name: sample_name, number_in_class: sample_number, class_name: sample_class)}
     let(:st2){Student.new(name: sample_name, number_in_class: sample_number, class_name: sample_class)}
-    it '内容が一致していれば、eql?が成立するものとする。' do
-      expect(st1.eql? st2).to be true
+    it '内容が一致していれば、==が成立するものとする。' do
+      expect(st1 == st2).to be true
     end
   end
 end

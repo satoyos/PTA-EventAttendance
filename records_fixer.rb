@@ -41,6 +41,7 @@ class RecordsFixer
     hashes_from_json = get_hashes_from(in_json_path)
     raise 'CSVのデータ数が明らかに少ない！' if hashes_from_json.size > records.size
     get_hashes_from(in_json_path).each_with_index do |hash, idx|
+      check_record_with_saved_data(records[idx], hash[:applied_record], index: idx)
       student_hash = hash[:correct_student]
       loaded_student = peer.fetch_student_of(class_name: student_hash[:class_name],
                                              number_in_class: student_hash[:number_in_class])
@@ -50,7 +51,15 @@ class RecordsFixer
     self
   end
 
+
   private
+
+  def check_record_with_saved_data(record, hash_from_json, index: nil)
+    raise ("CSVから読み込んだ#{index}番目のデータに食い違いがあります。\n" +
+        "  downloaded CSV  => #{record.name}, " +
+        "  saved_data_JSON => #{record.name}") unless
+        (record.to_pseudo_student == Student.new(hash_from_json))
+  end
 
   def get_hashes_from(in_json_path)
     raise '読み込む「確認済みJSONデータファイル」のパスを引数で指定してください。' unless in_json_path

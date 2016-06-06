@@ -30,4 +30,18 @@ describe 'AppliedRecord' do
       end
     end
   end
+
+  describe '#to_pseudo_student' do
+    let(:record){AppliedRecord.new(
+        name: '○○○子', parent_name: '○○×男', class_name: '阪急', number_in_class: 5, comment: '三冠王',
+        presence: true, attendee_number: 1
+    )}
+    it 'このレコードのデータを元に作成した仮オブジェクトを作る' do
+      record.to_pseudo_student.tap do |p_st|
+        expect(p_st).to be_a Student
+        expect(p_st).to eq Student.new(name: '○○○子', number_in_class: 5, class_name: '阪急')
+      end
+
+    end
+  end
 end

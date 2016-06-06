@@ -126,13 +126,18 @@ describe 'RecordsFixer' do
       it '例外が発生する' do
         expect{
             RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-wrong.csv').
-                fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
                 load_and_check_confirmed_data(TEST01_HISTORY_JSON)
         }.to raise_error RuntimeError
       end
     end
     context 'ダウンロードしてきたCSVのデータの順番が入れ替わっていたとき' do
-      #%ToDo: ここから！
+      it '例外が発生する' do
+        expect{
+          RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-switch.csv').
+              fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+              load_and_check_confirmed_data(TEST01_HISTORY_JSON)
+        }.to raise_error RuntimeError
+      end
     end
   end
 end
