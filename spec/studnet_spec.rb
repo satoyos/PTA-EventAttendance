@@ -28,11 +28,20 @@ describe 'student' do
     end
   end
 
-  describe 'to_s' do
+  describe '#to_s' do
     let(:student){Student.new(name: sample_name, number_in_class: sample_number)}
     it 'オブジェクトの内容を文字列化して返す' do
       expect(student.to_s).to be_a String
       expect(student.to_s).to eq '[14] ○○太郎'
+    end
+  end
+
+  describe '#eql?' do
+    sample_class = 'B組'
+    let(:st1){Student.new(name: sample_name, number_in_class: sample_number, class_name: sample_class)}
+    let(:st2){Student.new(name: sample_name, number_in_class: sample_number, class_name: sample_class)}
+    it '内容が一致していれば、eql?が成立するものとする。' do
+      expect(st1.eql? st2).to be true
     end
   end
 end
