@@ -33,10 +33,10 @@ describe 'RecordsFixer' do
     end
   end
 
-  describe '#fetch_correct_peer_data' do
+  describe '#set_peer_from_files_in' do
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
-          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json')
+          set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json')
     }
     it 'gets peer data from given file' do
       fixer.peer.tap do |p|
@@ -53,7 +53,7 @@ describe 'RecordsFixer' do
   describe '#guess_students' do
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
-          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+          set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
           guess_students
     }
     it 'returns a valid object' do
@@ -90,7 +90,7 @@ describe 'RecordsFixer' do
     TEST01_HISTORY_JSON = 'spec/test01_confirm_history.json'
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
-          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+          set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
           guess_students
     }
     it 'save history file' do
@@ -101,21 +101,21 @@ describe 'RecordsFixer' do
     end
   end
 
-  describe 'load_and_check_confirmed_data' do
+  describe 'load_confirmed_data_and_check' do
     before do
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
-          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+          set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
           guess_students.
           save_confirmed_history(TEST01_HISTORY_JSON)
     end
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
-          fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json')
+          set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json')
     }
     context 'ダウンロードしてきたCSVのデータと、保存していた確認済みJSONのデータに食い違いが無いとき' do
       it '自分自身を返し、レコードには該当するStudentオブジェクトがセットされている' do
         expect(fixer.records.first.correct_student).to be nil
-        expect(fixer.load_and_check_confirmed_data(TEST01_HISTORY_JSON)).to be_a RecordsFixer
+        expect(fixer.load_confirmed_data_and_check(TEST01_HISTORY_JSON)).to be_a RecordsFixer
         fixer.records.first.correct_student.tap do |first_st|
           expect(first_st).to be_a Student
           expect(first_st.name).to eq '山田洋'
@@ -126,7 +126,7 @@ describe 'RecordsFixer' do
       it '例外が発生する' do
         expect{
             RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-wrong.csv').
-                load_and_check_confirmed_data(TEST01_HISTORY_JSON)
+                load_confirmed_data_and_check(TEST01_HISTORY_JSON)
         }.to raise_error RuntimeError
       end
     end
@@ -134,8 +134,8 @@ describe 'RecordsFixer' do
       it '例外が発生する' do
         expect{
           RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-switch.csv').
-              fetch_correct_peer_data('セ・リーグ', files_path_json: 'spec/class_files_path.json').
-              load_and_check_confirmed_data(TEST01_HISTORY_JSON)
+              set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+              load_confirmed_data_and_check(TEST01_HISTORY_JSON)
         }.to raise_error RuntimeError
       end
     end

@@ -13,9 +13,9 @@ class RecordsFixer
     @records = records_from_csv(record_csv_path)
   end
 
-  def fetch_correct_peer_data(peer_name, files_path_json: nil)
+  def set_peer_from_files_in(peer_name, files_path_json: nil)
     @peer = Peer.new(peer_name)
-    set_classes_to_peer(peer, data_source_json: files_path_json)
+    add_class_to_peer_from(peer, data_source_json: files_path_json)
     self
   end
 
@@ -37,10 +37,10 @@ class RecordsFixer
   end
 
 
-  def load_and_check_confirmed_data(in_json_path)
+  def load_confirmed_data_and_check(in_json_path)
     hashes_from_json = get_hashes_from(in_json_path)
     raise 'CSVのデータ数が明らかに少ない！' if hashes_from_json.size > records.size
-    get_hashes_from(in_json_path).each_with_index do |hash, idx|
+    hashes_from_json.each_with_index do |hash, idx|
       check_record_with_saved_data(records[idx], hash[:applied_record], index: idx)
       student_hash = hash[:correct_student]
       loaded_student = peer.fetch_student_of(class_name: student_hash[:class_name],
@@ -86,13 +86,13 @@ class RecordsFixer
                      class_name: row['クラス'],
                      presence: (row['出欠'] == '出席'),
                      parent_name: row['保護者氏名'],
-                     attendee_number: extract_attendie_number(row),
+                     attendee_number: extract_attendie_number_in(row),
                      comment: row['コメント'],
                      date: Date.parse(row['回答日時']),
     )
   end
 
-  def extract_attendie_number(row)
+  def extract_attendie_number_in(row)
     m = row['参加人数'].match(/(\S+)名/)
     return 0 unless m
     case m[1]
@@ -109,7 +109,7 @@ class RecordsFixer
     end
   end
 
-  def set_classes_to_peer(peer, data_source_json: nil)
+  def add_class_to_peer_from(peer, data_source_json: nil)
     raise 'Peerオブジェクトを引数で指定してください。' unless peer.is_a? Peer
     raise '引数で、クラス名簿ファイルのパスが記述されたJSONファイルを指定してください。' unless data_source_json
     raise "指定されたパスのファイルが見つかりません。[#{data_source_json}]" unless File.exist? data_source_json
