@@ -25,8 +25,8 @@ class Classroom
   def read_students_from_txt(txt_path)
     open(txt_path, 'r:utf-8') do |infile|
       while (line = infile.gets)
-        break if line.length < 1
-        m = line.strip!.match(/\A([0-9]+)\s+(\S+)\z/)
+        break if line.strip!.nil? or line.length < 1
+        m = line.match(/\A([0-9]+)\s+(\S+)\z/)
         raise "行データから出席番号と名前を読み取れませんでした。\n => #{[line]}" unless m
         self.add_students(Student.new(name: m[2], number_in_class: m[1].to_i))
       end
