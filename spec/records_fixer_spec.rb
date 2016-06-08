@@ -1,5 +1,15 @@
 require_relative '../records_fixer'
 
+def logfile
+  RecordsFixer::GUESSING_LOG
+end
+
+def line_num_in_logfile
+  File.read(logfile).count("\n")
+end
+
+TEST01_HISTORY_JSON = 'spec/test01_confirm_history.json'
+
 describe 'RecordsFixer' do
   describe '初期化' do
     context '引数無しで初期化した場合' do
@@ -10,7 +20,7 @@ describe 'RecordsFixer' do
     end
     context '出欠登録レコードのファイルパスを与えて初期化する' do
       let(:fixer){RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv')}
-      it 'should be a RecordFixter' do
+      it 'should be a RecordFixer' do
         expect(fixer).to be_a RecordsFixer
       end
       it '出欠レコードを与えられたファイルから読み込んでいる' do
@@ -28,9 +38,16 @@ describe 'RecordsFixer' do
             expect(r.comment).to eq 'Eコース: オーストリア'
             expect(r.date).to eq Date.new(2016, 6, 2)
           end
+          recs.last.tap do |last|
+            expect(last.name).to eq 'サムソン・るー'
+          end
         end
       end
+      it 'ログ出力できるようになっている' do
+        expect(fixer.log).to be_a Logger
+      end
     end
+
   end
 
   describe '#set_peer_from_files_in' do
@@ -41,7 +58,7 @@ describe 'RecordsFixer' do
     it 'gets peer data from given file' do
       fixer.peer.tap do |p|
         expect(p).to be_a Peer
-        # expect(p.classes.size).to be 3
+        expect(p.classes.size).to be 3
         p.classes.first.tap do |first_class|
           expect(first_class).to be_a Classroom
           expect(first_class.students.size).to be 23
@@ -84,10 +101,37 @@ describe 'RecordsFixer' do
         expect(fourth_st.name).to eq 'サムソン・リー'
       end
     end
+    describe 'ログを出力する' do
+      before do
+        # 予め、ログを消しておく
+        File.delete(logfile) if File.exist?(logfile)
+        RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
+            set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+            guess_students.save_confirmed_history(TEST01_HISTORY_JSON)
+      end
+      context '確認済み履歴がないとき' do
+        it 'ログファイルを出力する' do
+          expect(File.exist?(logfile)).to be true
+        end
+        it 'ファイルの行数は、レコードの数+1 (デフォルトでログに入る1行分を追加)' do
+          expect(line_num_in_logfile).to be 4+1
+        end
+      end
+      context '確認済み履歴があるとき' do
+        it '確認が終わってないレコードのみ処理するので、ログには新たに加わったレコード数の分しか残らない' do
+            File.delete(logfile) if File.exist?(logfile) # 行数をはっきりかくにんするため、ログを消す
+            RecordsFixer.new(record_csv_path: 'spec/out-2016-06-03-test.csv').
+                set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+                load_confirmed_data_and_check(TEST01_HISTORY_JSON).
+                guess_students
+            expect(line_num_in_logfile).to be 2+1
+        end
+      end
+
+    end
   end
 
   describe '#save_confirmed_history' do
-    TEST01_HISTORY_JSON = 'spec/test01_confirm_history.json'
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
           set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').

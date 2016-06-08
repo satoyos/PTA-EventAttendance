@@ -4,13 +4,17 @@ require_relative 'handle_csv_from_excel'
 require_relative 'applied_record'
 require_relative 'peer'
 require 'json'
+require 'logger'
 
 class RecordsFixer
-  attr_reader :records, :peer
+  GUESSING_LOG = './guessing.log'
+
+  attr_reader :records, :peer, :log
 
   def initialize(record_csv_path: nil)
     return unless record_csv_path
     @records = records_from_csv(record_csv_path)
+    @log = Logger.new(GUESSING_LOG)
   end
 
   def set_peer_from_files_in(peer_name, files_path_json: nil)
@@ -20,9 +24,11 @@ class RecordsFixer
   end
 
   def guess_students
-    records.each do |rec|
+    records.each_with_index do |rec, idx|
+      next if rec.correct_student
       rec.correct_student, rec.penalty =
           peer.guess_who(class_name: rec.class_name, number: rec.number_in_class, name: rec.name)
+      log.info("#{idx+1}番目のレコード[#{rec.class_name}, #{rec.number_in_class}, #{rec.name}]をチェックしました")
     end
     self
   end
