@@ -100,6 +100,7 @@ class RecordsFixer
   end
 
   def extract_attendie_number_in(row)
+    return 0 unless row['参加人数']
     m = row['参加人数'].match(/(\S+)名/)
     return 0 unless m
     case m[1]
