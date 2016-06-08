@@ -5,7 +5,11 @@ def logfile
 end
 
 def line_num_in_logfile
-  File.read(logfile).count("\n")
+  num = 0
+  File.open(logfile, 'r:utf-8') do |file|
+    num = file.read.count("\n")
+  end
+  num
 end
 
 TEST01_HISTORY_JSON = 'spec/test01_confirm_history.json'
@@ -42,9 +46,6 @@ describe 'RecordsFixer' do
             expect(last.name).to eq 'サムソン・るー'
           end
         end
-      end
-      it 'ログ出力できるようになっている' do
-        expect(fixer.log).to be_a Logger
       end
     end
 
