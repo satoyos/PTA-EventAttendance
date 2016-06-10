@@ -1,7 +1,7 @@
 require_relative '../records_fixer'
 
 def logfile
-  RecordsFixer::GUESSING_LOG
+  'spec/guessing.log'
 end
 
 def line_num_in_logfile
@@ -72,7 +72,7 @@ describe 'RecordsFixer' do
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
           set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
-          guess_students
+          guess_students(logfile)
     }
     it 'returns a valid object' do
       expect(fixer).to be_a RecordsFixer
@@ -108,7 +108,7 @@ describe 'RecordsFixer' do
         File.delete(logfile) if File.exist?(logfile)
         RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
             set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
-            guess_students.save_confirmed_history(TEST01_HISTORY_JSON)
+            guess_students(logfile).save_confirmed_history(TEST01_HISTORY_JSON)
       end
       context '確認済み履歴がないとき' do
         it 'ログファイルを出力する' do
@@ -124,7 +124,7 @@ describe 'RecordsFixer' do
             RecordsFixer.new(record_csv_path: 'spec/out-2016-06-03-test.csv').
                 set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
                 load_confirmed_data_and_check(TEST01_HISTORY_JSON).
-                guess_students
+                guess_students(logfile)
             expect(line_num_in_logfile).to be 2+1
         end
       end
@@ -136,7 +136,7 @@ describe 'RecordsFixer' do
     let(:fixer){
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
           set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
-          guess_students
+          guess_students(logfile)
     }
     it 'save history file' do
       File.delete TEST01_HISTORY_JSON if File.exist? TEST01_HISTORY_JSON
@@ -150,7 +150,7 @@ describe 'RecordsFixer' do
     before do
       RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
           set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
-          guess_students.
+          guess_students(logfile).
           save_confirmed_history(TEST01_HISTORY_JSON)
     end
     let(:fixer){

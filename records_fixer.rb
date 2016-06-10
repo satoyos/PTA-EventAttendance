@@ -22,13 +22,14 @@ class RecordsFixer
     self
   end
 
-  def guess_students
-    log = Logger.new(GUESSING_LOG)
+  def guess_students(log_path=nil)
+    log = Logger.new(log_path ? log_path : GUESSING_LOG)
     records.each_with_index do |rec, idx|
       next if rec.correct_student
       rec.correct_student, rec.penalty =
           peer.guess_who(class_name: rec.class_name, number: rec.number_in_class, name: rec.name)
-      log.info("#{idx+1}番目のレコード[#{rec.class_name}, #{rec.number_in_class}, #{rec.name}]をチェックしました")
+      log.info(check_done_message(idx, rec))
+      puts " - #{check_done_message(idx, rec)}"
     end
     log.close
     self
@@ -143,5 +144,9 @@ class RecordsFixer
             name: record.correct_student.name
         }
     }
+  end
+
+  def check_done_message(idx, rec)
+    "#{idx+1}番目のレコード[#{rec.class_name}, #{rec.number_in_class}, #{rec.name}]をチェックしました"
   end
 end
