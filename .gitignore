@@ -3,3 +3,4 @@
 vendor/
 spec/test*_confirm_history.json
 *.log
+.envrc
