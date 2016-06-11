@@ -16,7 +16,7 @@ class Classroom
   class << self
     def create_from_member_txt(txt_path, class_name: nil)
       raise '生徒の出席番号と名前を1行毎に列挙したテキストファイルのパスを指定してください' unless txt_path
-      raise "指定されたパスのファイガ見つかりません。[#{txt_path}]" unless File.exist?(txt_path)
+      raise "指定されたパスのファイルが見つかりません。[#{txt_path}]" unless File.exist?(txt_path)
       raise 'クラスの名前を引数で指定してください。' unless class_name
       self.new(class_name).read_students_from_txt(txt_path)
     end

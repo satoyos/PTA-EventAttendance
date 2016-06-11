@@ -4,6 +4,7 @@ require_relative 'handle_csv_from_excel'
 require_relative 'applied_record'
 require_relative 'peer'
 require 'json'
+require 'pathname'
 require 'logger'
 
 class RecordsFixer
@@ -125,10 +126,15 @@ class RecordsFixer
     open(data_source_json, 'r:utf-8') do |infile|
       json = JSON.parse(infile.read, symbolize_names: true)
       json.each do |hash|
-        peer.add_class(Classroom.create_from_member_txt(hash[:file_path],
-                                                        class_name: hash[:class_name]))
+        peer.add_class(Classroom.create_from_member_txt(
+          member_list_file_path(data_source_json, hash[:file_path]),
+          class_name: hash[:class_name]))
       end
     end
+  end
+
+  def member_list_file_path(data_source_json_path, each_class_relative_path)
+    (Pathname(data_source_json_path).dirname + Pathname(each_class_relative_path)).to_s
   end
 
   def hash_to_save_from(record)
