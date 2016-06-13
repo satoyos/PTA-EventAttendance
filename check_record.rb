@@ -4,8 +4,7 @@ require_relative 'add_course_data'
 # このファイルを、Excelデータが更新されるたびに書き換える
 RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-13.csv')
 
-DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コメント)
-# DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数)
+DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コース コメント)
 
 # 生徒の名寄せチェック済みのデータファイル。
 # 新規に追加されたものについては、間違っているかもしれないので、
@@ -22,6 +21,7 @@ def class_member_files_list_json
 end
 
 # コース毎の生徒一覧ファイル(へのパス)を、全コース分記載したファイル。
+# 「コース」情報は、今回のイベント固有の情報
 def course_member_files_list_json
   ENV['COURSE_MEMBER_FILES_LIST_PATH']
 end
@@ -50,10 +50,12 @@ end
 
 def student_data_of_class(cr, idx: nil, records: [])
   return Array.new(DATA_HEADER_IN_CLASS.size + 1) if (st = cr.students[idx]).nil?
-  last_record = records.select{|rec| rec.correct_student == st}.last
-  return  [st.number_in_class, st.name, Array.new(DATA_HEADER_IN_CLASS.size - 1)] if last_record.nil?
+  last_rec = records.select{|rec| rec.correct_student == st}.last
+  return  [st.number_in_class, st.name, Array.new(DATA_HEADER_IN_CLASS.size - 1)] if last_rec.nil?
+  return [st.number_in_class, st.name, presence_str_for(last_rec), attendee_number_for(last_rec),
+          nil, last_rec.comment, nil] unless last_rec.presence
   [st.number_in_class, st.name,
-   presence_str_for(last_record), attendee_number_for(last_record), last_record.comment, nil]
+   presence_str_for(last_rec), attendee_number_for(last_rec), st.course, last_rec.comment, nil]
 end
 
 def classroom_data_of(peer, idx: nil, records: nil)
@@ -84,7 +86,7 @@ fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
     load_confirmed_data_and_check(confirm_history_json).
     guess_students.save_confirmed_history(confirm_history_json)
 
-add_course_to_peer_from(fixer.peer, course_member_files_list_json) if course_member_files_list_json
+add_course_to_peer_from(fixer.peer, course_member_files_list_json)
 
 csv_out_peer_for_excel(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
                        fixer.peer, fixer.records)

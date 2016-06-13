@@ -7,7 +7,7 @@ end
 
 def add_course_to_peer_from(peer, data_source_json)
   raise 'Peerオブジェクトを引数で指定してください。' unless peer.is_a? Peer
-  raise '引数で、クラス名簿ファイルのパスが記述されたJSONファイルを指定してください。' unless data_source_json
+  raise '引数で、コース毎の名簿ファイルのパスが記述されたJSONファイルを指定してください。' unless data_source_json
   raise "指定されたパスのファイルが見つかりません。[#{data_source_json}]" unless File.exist? data_source_json
   open(data_source_json, 'r:utf-8') do |infile|
     json = JSON.parse(infile.read, symbolize_names: true)
