@@ -4,3 +4,4 @@ vendor/
 spec/test*_confirm_history.json
 *.log
 .envrc
+spec/test_out*.csv
