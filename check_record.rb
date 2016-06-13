@@ -1,7 +1,8 @@
 require_relative 'records_fixer'
+require_relative 'add_course_data'
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-12.csv')
+RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-13.csv')
 
 DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コメント)
 # DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数)
@@ -18,6 +19,11 @@ end
 def class_member_files_list_json
   ENV['CLASS_MEMBER_FILES_LIST_PATH'] ||
     raise('環境変数[CLASS_MEMBER_FILES_LIST_PATH]で、 クラス毎の生徒一覧ファイル(へのパス)を、全クラス分記載したファイルを指定してください。')
+end
+
+# コース毎の生徒一覧ファイル(へのパス)を、全コース分記載したファイル。
+def course_member_files_list_json
+  ENV['COURSE_MEMBER_FILES_LIST_PATH']
 end
 
 # 集計結果CSVの出力フォルダ
@@ -77,6 +83,8 @@ fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
     set_peer_from_files_in('高2', files_path_json: class_member_files_list_json ).
     load_confirmed_data_and_check(confirm_history_json).
     guess_students.save_confirmed_history(confirm_history_json)
+
+add_course_to_peer_from(fixer.peer, course_member_files_list_json) if course_member_files_list_json
 
 csv_out_peer_for_excel(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
                        fixer.peer, fixer.records)
