@@ -2,7 +2,7 @@ require_relative 'records_fixer'
 require_relative 'add_course_data'
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-13.csv')
+RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-18.csv')
 
 DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コース コメント)
 
