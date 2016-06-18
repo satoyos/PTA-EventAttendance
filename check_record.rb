@@ -1,5 +1,5 @@
 require_relative 'records_fixer'
-require_relative 'add_course_data'
+require_relative 'course'
 
 # このファイルを、Excelデータが更新されるたびに書き換える
 RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-18.csv')
@@ -75,9 +75,37 @@ def csv_str_for_peer(peer, records)
   end
 end
 
-def csv_out_peer_for_excel(path, peer, records)
-  File.open(path, 'w:windows-31j') do |outfile|
+def students_of_course(course_name, peer)
+  peer.all_students.select{|st| st.course == course_name}
+end
+
+def course_data_of(peer, idx: nil)
+  courses_from_json.map{|course|
+    student_data_of_course(course, )
+
+  }
+end
+
+def csv_str_for_course(peer, records)
+  courses = courses_from_json(course_member_files_list_json)
+  max_students_num = courses.map{|course| students_of_course(courses, peer).size}.max
+  CSV.generate do |csv|
+    (0..max_students_num-1).each do |idx|
+      csv << course_data_of(peer, idx: idx)
+    end
+
+  end
+end
+
+def csv_out_by_peer(path, peer, records, encoding: 'utf-8')
+  File.open(path, 'w:'+encoding) do |outfile|
     outfile.puts csv_str_for_peer(peer, records)
+  end
+end
+
+def csv_out_by_course(path, peer, records, encoding: 'utf-8')
+  File.open(path, 'w:'+encoding) do |outfile|
+    outfile.puts csv_str_for_course(peer, records)
   end
 end
 
@@ -88,7 +116,10 @@ fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
 
 add_course_to_peer_from(fixer.peer, course_member_files_list_json)
 
-csv_out_peer_for_excel(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
-                       fixer.peer, fixer.records)
+csv_out_by_peer(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
+                fixer.peer, fixer.records, encoding: 'windows-31j')
+
+csv_out_by_course(File.join(output_csv_folder, 'コース別出欠状況.csv'),
+                  fixer.peer, fixer.records, encoding: 'windows-31j')
 
 puts "\n【正常終了】"

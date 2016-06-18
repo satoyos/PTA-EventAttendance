@@ -31,4 +31,8 @@ class Peer
     raise "指定された出席番号[#{number_in_class}の生徒がクラス[#{class_name}]で見つかりません" unless valid_student
     valid_student
   end
+
+  def all_students
+    classes.inject([]){|sum, classroom| sum + classroom.students}
+  end
 end

@@ -93,4 +93,19 @@ describe 'Peer' do
       end
     end
   end
+
+  describe '#all_students' do
+    let(:peer){Peer.new('セ・リーグ')}
+    before do
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_TIGERS,  class_name: '阪神'))
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_DRAGONS, class_name: '中日'))
+      peer.add_class(Classroom.create_from_member_txt(MEMBER_TXT_GIANTS,  class_name: '巨人'))
+    end
+    it '学年の全生徒を配列で返す'do
+      peer.all_students.tap do |all|
+        expect(all).to be_an Array
+        expect(all.size).to be 53
+      end
+    end
+  end
 end
