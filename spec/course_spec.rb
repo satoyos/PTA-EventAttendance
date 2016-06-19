@@ -38,9 +38,9 @@ describe 'Course' do
     end
   end
 
-  describe 'クラスメソッド create_courses_from_json' do
+  describe 'クラスメソッド read_courses_from_json' do
     TEST_COURSE_FILES_JSON = 'spec/camp/course_member_files.json'
-    let(:courses){Course.create_courses_from_json(TEST_COURSE_FILES_JSON, peer: peer)}
+    let(:courses){Course.read_courses_from_json(TEST_COURSE_FILES_JSON, peer: peer)}
     it 'Courseオブジェクトの配列を返す' do
       expect(courses).to be_an Array
     end

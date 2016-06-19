@@ -28,7 +28,7 @@ class Course
       self.new(course_name).read_students_from_txt(txt_path, peer)
     end
 
-    def create_courses_from_json(json_path, peer: nil, options: {})
+    def read_courses_from_json(json_path, peer: nil, options: {})
       raise 'コース名簿ファイルの一覧を記載したJSONファイルをパスで指定してください' unless json_path
       raise "引数で指定されたパスのファイルが見つかりません。[#{json_path}]" unless File.exist? json_path
       encoding = options[:encoding] ? options[:encoding] : 'utf-8'
