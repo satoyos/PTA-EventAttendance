@@ -185,4 +185,22 @@ describe 'RecordsFixer' do
       end
     end
   end
+
+  describe 'list_up_students_to_come' do
+    let(:fixer){
+      RecordsFixer.new(record_csv_path: 'spec/out-2016-06-02-test.csv').
+        set_peer_from_files_in('セ・リーグ', files_path_json: 'spec/class_files_path.json').
+        guess_students(logfile).list_up_students_to_come
+    }
+    it '自身を返す' do
+      expect(fixer).to be_a RecordsFixer
+    end
+    it 'students_to_comeプロパティに、(保護者が)出席予定の生徒がリストアップされている' do
+      fixer.students_to_come.tap do |list|
+        expect(list).to be_an Array
+        expect(list.size).to be 3
+        expect(list.last.name).to eq '森昌彦'
+      end
+    end
+  end
 end

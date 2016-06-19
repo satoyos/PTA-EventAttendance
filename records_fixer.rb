@@ -10,7 +10,7 @@ require 'logger'
 class RecordsFixer
   GUESSING_LOG = './guessing.log'
 
-  attr_reader :records, :peer, :log
+  attr_reader :records, :peer, :log, :students_to_come
 
   def initialize(record_csv_path: nil)
     return unless record_csv_path
@@ -60,6 +60,13 @@ class RecordsFixer
     self
   end
 
+  def list_up_students_to_come
+    @students_to_come = peer.all_students.select{|st|
+      last_record = records.select{|rec| rec.correct_student == st}.last
+      last_record ? last_record.presence : false
+    }
+    self
+  end
 
   private
 
