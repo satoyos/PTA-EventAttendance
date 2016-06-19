@@ -18,12 +18,28 @@ class Course
   end
 
   class << self
+    attr_accessor :all_courses
+
     def create_from_member_txt(txt_path, course_name: nil, peer: nil)
       raise 'コースの名称を引数で指定してください。' unless course_name
       raise 'コースに参加する生徒一覧のテキストファイルを引数で指定してください。' unless txt_path
       raise "引数で指定されたパスのファイルが見つかりません。[#{txt_path}]" unless File.exist? txt_path
       raise '学年の生徒データを保持するPeerオブジェクトを引数で指定してください。' unless peer
       self.new(course_name).read_students_from_txt(txt_path, peer)
+    end
+
+    def create_courses_from_json(json_path, peer: nil, options: {})
+      raise 'コース名簿ファイルの一覧を記載したJSONファイルをパスで指定してください' unless json_path
+      raise "引数で指定されたパスのファイルが見つかりません。[#{json_path}]" unless File.exist? json_path
+      encoding = options[:encoding] ? options[:encoding] : 'utf-8'
+      self.all_courses = nil
+      open(json_path, 'r:' + encoding) do |f|
+        self.all_courses = JSON.parse(f.read, symbolize_names: true).map{|course_hash|
+          create_from_member_txt(File.join(File.dirname(json_path), course_hash[:file_path]),
+          course_name: course_hash[:course], peer: peer)
+        }
+      end
+      self.all_courses
     end
   end
 
@@ -38,6 +54,8 @@ class Course
     end
     self
   end
+
+
 end
 
 def add_course_to_peer_from(peer, data_source_json)

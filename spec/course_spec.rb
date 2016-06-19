@@ -19,8 +19,8 @@ describe 'Course' do
   end
 
   describe 'クラスメソッド create_from_member_txt' do
-    TEST_MEMBER_TXT_PATH = 'spec/camp/naha.txt'
-    let(:course){Course.create_from_member_txt(TEST_MEMBER_TXT_PATH, course_name: '那覇', peer: peer)}
+    TEST_COURSE_MEMBER_TXT_PATH = 'spec/camp/naha.txt'
+    let(:course){Course.create_from_member_txt(TEST_COURSE_MEMBER_TXT_PATH, course_name: '那覇', peer: peer)}
     it 'should be a valid object' do
       expect(course).to be_a Course
       expect(course.name).to eq '那覇'
@@ -38,4 +38,27 @@ describe 'Course' do
     end
   end
 
+  describe 'クラスメソッド create_courses_from_json' do
+    TEST_COURSE_FILES_JSON = 'spec/camp/course_member_files.json'
+    let(:courses){Course.create_courses_from_json(TEST_COURSE_FILES_JSON, peer: peer)}
+    it 'Courseオブジェクトの配列を返す' do
+      expect(courses).to be_an Array
+    end
+    it '要素数は3で、最初のコースは那覇' do
+      expect(courses.size).to be 3
+      expect(courses.first.name).to eq '那覇'
+    end
+    it '那覇コースの生徒数は4' do
+      expect(courses.first.students.size).to be 4
+    end
+    it 'クラス変数にもセットされている' do
+      Course.all_courses.tap do |all|
+        expect(all).to be_an Array
+        expect(all.size).to be 3
+        expect(all.first.students.size).to be 4
+      end
+
+    end
+
+  end
 end

@@ -1,0 +1,14 @@
+[
+  {
+    "course"    : "那覇",
+    "file_path" : "naha.txt"
+  },
+  {
+    "course"    : "宮崎",
+    "file_path" : "miyazaki.txt"
+  },
+  {
+    "course"    : "グアム",
+    "file_path" : "guam.txt"
+  }
+]
