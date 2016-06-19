@@ -2,7 +2,7 @@ require_relative 'records_fixer'
 require_relative 'course'
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-18.csv')
+RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-19.csv')
 
 DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コース コメント)
 
@@ -119,7 +119,9 @@ add_course_to_peer_from(fixer.peer, course_member_files_list_json)
 csv_out_by_peer(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
                 fixer.peer, fixer.records, encoding: 'windows-31j')
 
+=begin
 csv_out_by_course(File.join(output_csv_folder, 'コース別出欠状況.csv'),
                   fixer.peer, fixer.records, encoding: 'windows-31j')
+=end
 
 puts "\n【正常終了】"
