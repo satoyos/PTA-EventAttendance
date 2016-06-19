@@ -114,7 +114,7 @@ fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
     load_confirmed_data_and_check(confirm_history_json).
     guess_students.save_confirmed_history(confirm_history_json)
 
-add_course_to_peer_from(fixer.peer, course_member_files_list_json)
+Course.read_courses_from_json(course_member_files_list_json, peer: fixer.peer)
 
 csv_out_by_peer(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
                 fixer.peer, fixer.records, encoding: 'windows-31j')

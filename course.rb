@@ -49,21 +49,11 @@ class Course
         break if line.strip!.nil? or line.length < 1
         m = line.match(/\A(\S+)\s+([0-9]+)\s+(\S+)\z/)
         raise "行データからクラス名、出席番号と名前を読み取れませんでした。\n => #{[line]}" unless m
-        self.add_student(peer.guess_who(class_name: m[1], number: m[2].to_i, name: m[3])[0])
+        guessed_student = peer.guess_who(class_name: m[1], number: m[2].to_i, name: m[3])[0]
+        guessed_student.course = self.name.to_sym
+        self.add_student(guessed_student)
       end
     end
     self
-  end
-
-
-end
-
-def add_course_to_peer_from(peer, data_source_json)
-  raise 'Peerオブジェクトを引数で指定してください。' unless peer.is_a? Peer
-  raise '引数で、コース毎の名簿ファイルのパスが記述されたJSONファイルを指定してください。' unless data_source_json
-  raise "指定されたパスのファイルが見つかりません。[#{data_source_json}]" unless File.exist? data_source_json
-  Course.read_courses_from_json(data_source_json, peer: peer)
-  Course.all_courses.each do |course|
-    course.students.each{|st| st.course = course.name.to_sym}
   end
 end

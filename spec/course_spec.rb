@@ -57,8 +57,13 @@ describe 'Course' do
         expect(all.size).to be 3
         expect(all.first.students.size).to be 4
       end
-
     end
-
+    describe '生徒のcourseプロパティの値が設定されている'
+    it '最初のコースの最後の生徒のコースデータが正しく設定されている' do
+      Course.all_courses.first.students.last.tap do |st|
+        expect(st).to be_a Student
+        expect(st.course).to be :那覇
+      end
+    end
   end
 end
