@@ -7,6 +7,10 @@ require 'json'
 require 'pathname'
 require 'logger'
 
+class Student
+  attr_accessor :presence, :attendee_number
+end
+
 class RecordsFixer
   GUESSING_LOG = './guessing.log'
 
@@ -63,6 +67,8 @@ class RecordsFixer
   def list_up_students_to_come
     @students_to_come = peer.all_students.select{|st|
       last_record = records.select{|rec| rec.correct_student == st}.last
+      st.presence = last_record.presence if last_record
+      st.attendee_number = last_record.attendee_number if last_record
       last_record ? last_record.presence : false
     }
     self
