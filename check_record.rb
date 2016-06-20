@@ -1,5 +1,7 @@
 require_relative 'records_fixer'
 require_relative 'course'
+require_relative 'csv_out_by_classroom'
+include CsvOutByClassroom
 
 # このファイルを、Excelデータが更新されるたびに書き換える
 RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-19.csv')
@@ -32,14 +34,6 @@ def output_csv_folder
       raise('環境変数[OUTPUT_CSV_FOLDER]で、 集計結果CSVを出力するフォルダを指定してください。')
 end
 
-def peer_header(peer)
-  peer.classes.map{|cr| [cr.name + '組'] + Array.new(DATA_HEADER_IN_CLASS.size)}.flatten
-end
-
-def classroom_header(peer)
-  peer.classes.map{|cr| DATA_HEADER_IN_CLASS + Array.new(1)}.flatten
-end
-
 def presence_str_for(record)
   record.presence ? '○' : '×'
 end
@@ -48,32 +42,6 @@ def attendee_number_for(record)
   record.presence ? record.attendee_number : nil
 end
 
-def student_data_of_class(cr, idx: nil, records: [])
-  return Array.new(DATA_HEADER_IN_CLASS.size + 1) if (st = cr.students[idx]).nil?
-  last_rec = records.select{|rec| rec.correct_student == st}.last
-  return  [st.number_in_class, st.name, Array.new(DATA_HEADER_IN_CLASS.size - 1)] if last_rec.nil?
-  return [st.number_in_class, st.name, presence_str_for(last_rec), attendee_number_for(last_rec),
-          nil, last_rec.comment, nil] unless last_rec.presence
-  [st.number_in_class, st.name,
-   presence_str_for(last_rec), attendee_number_for(last_rec), st.course, last_rec.comment, nil]
-end
-
-def classroom_data_of(peer, idx: nil, records: nil)
-  peer.classes.map{|cr|
-    student_data_of_class(cr, idx: idx, records: records)
-  }.flatten
-end
-
-def csv_str_for_peer(peer, records)
-  max_students_num = peer.classes.map{|cr| cr.students.size}.max
-  CSV.generate do |csv|
-    csv << peer_header(peer)
-    csv << classroom_header(peer)
-    (0..max_students_num-1).each do |idx|
-      csv << classroom_data_of(peer, idx: idx, records: records)
-    end
-  end
-end
 
 def students_of_course(course_name, peer)
   peer.all_students.select{|st| st.course == course_name}
@@ -99,12 +67,6 @@ def csv_str_for_course(fixer)
     end
 =end
 
-  end
-end
-
-def csv_out_by_peer(path, peer, records, encoding: 'utf-8')
-  File.open(path, 'w:'+encoding) do |outfile|
-    outfile.puts csv_str_for_peer(peer, records)
   end
 end
 
