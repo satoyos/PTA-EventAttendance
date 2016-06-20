@@ -6,7 +6,7 @@ require_relative 'csv_out_by_course'
 include CsvOutByCourse
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-19.csv')
+RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-20.csv')
 
 # 生徒の名寄せチェック済みのデータファイル。
 # 新規に追加されたものについては、間違っているかもしれないので、
