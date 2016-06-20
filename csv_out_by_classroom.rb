@@ -1,4 +1,6 @@
 module CsvOutByClassroom
+  DATA_HEADER_IN_CLASS =  %w(# 氏名 出欠 参加人数 コース コメント)
+
   def peer_header(peer)
     peer.classes.map{|cr| [cr.name + '組'] + Array.new(DATA_HEADER_IN_CLASS.size)}.flatten
   end
