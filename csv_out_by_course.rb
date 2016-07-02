@@ -9,20 +9,6 @@ module CsvOutByCourse
     DATA_HEADER_IN_COURSE + [nil]
   end
 
-=begin
-  def students_of_course(course_name, peer)
-    peer.all_students.select{|st| st.course == course_name}
-  end
-
-  def course_data_of(idx=nil)
-    raise '何番目のデータを出力するのかを引数で指定してください。' unless idx
-    Course.all_courses.map{|course|
-      student_data_of_course(course, )
-
-    }
-  end
-=end
-
   def student_data(student)
     return Array.new(column_size_per_course) unless student
     [student.class_name, student.number_in_class, student.name, student.attendee_number, nil]
