@@ -6,7 +6,7 @@ module CsvOutByCourse
   end
 
   def header_for_each_course
-    DATA_HEADER_IN_COURSE << nil
+    DATA_HEADER_IN_COURSE + [nil]
   end
 
 =begin
@@ -24,7 +24,7 @@ module CsvOutByCourse
 =end
 
   def student_data(student)
-    return Array.new(DATA_HEADER_IN_COURSE.size + 1) unless student
+    return Array.new(column_size_per_course) unless student
     [student.class_name, student.number_in_class, student.name, student.attendee_number, nil]
   end
 
@@ -32,7 +32,6 @@ module CsvOutByCourse
     students_by_course = fixer.students_to_come.group_by{|st| st.course}
     max_students_num = students_by_course.values.map{|students| students.size}.max
     CSV.generate do |csv|
-      #%ToDo: ここをちゃんと書く！
       csv << all_course_header(students_by_course.keys)
       csv << (header_for_each_course * students_by_course.keys.size)
       (0..max_students_num-1).each do |idx|
@@ -49,5 +48,11 @@ module CsvOutByCourse
     File.open(path, 'w:'+encoding) do |outfile|
       outfile.puts csv_str_for_course(fixer)
     end
+  end
+
+  private
+
+  def column_size_per_course
+    DATA_HEADER_IN_COURSE.size + 1
   end
 end
