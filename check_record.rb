@@ -6,7 +6,7 @@ require_relative 'csv_out_by_course'
 include CsvOutByCourse
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-06-24.csv')
+RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-10-01.csv')
 
 # 生徒の名寄せチェック済みのデータファイル。
 # 新規に追加されたものについては、間違っているかもしれないので、
@@ -49,12 +49,12 @@ fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
     guess_students.list_up_students_to_come.
   save_confirmed_history(confirm_history_json)
 
-Course.read_courses_from_json(course_member_files_list_json, peer: fixer.peer)
+# Course.read_courses_from_json(course_member_files_list_json, peer: fixer.peer)
 
 csv_out_by_peer(File.join(output_csv_folder, 'クラス別出欠状況.csv'),
                 fixer.peer, fixer.records, encoding: 'windows-31j')
 
-csv_out_by_course(File.join(output_csv_folder, 'コース別出欠状況.csv'),
-                  fixer, encoding: 'windows-31j')
+# csv_out_by_course(File.join(output_csv_folder, 'コース別出欠状況.csv'),
+#                   fixer, encoding: 'windows-31j')
 
 puts "\n【正常終了】"
