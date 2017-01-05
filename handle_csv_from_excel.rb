@@ -12,5 +12,15 @@ class HandleCsvFromExcel
       end
       csv
     end
+
+    def convert_excel_to_csv(path)
+      raise '初期化パラーメータとして、Excelファイルのパスを指定してください' unless path
+      raise "指定されたパスのファイルが見つかりません。[#{path}]" unless File.exist?(path)
+      out_csv_path = path.gsub(/xls/, 'csv')
+      File.open(out_csv_path, 'w:utf-8') do |outfile|
+        outfile.puts('aaa')
+      end
+    end
   end
+
 end
