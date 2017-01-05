@@ -42,7 +42,7 @@ describe 'HandleCsvFromExcel' do
       clean_test_outflie_if_exist
     end
     it 'creates csv file from Excel' do
-      HandleCsvFromExcel.convert_excel_to_csv(TEST_EXCEL_PATH)
+      HandleCsvFromExcel.convert_excel(TEST_EXCEL_PATH, to_csv: TEST_RESULT_CSV)
       expect(File.exist? TEST_RESULT_CSV).to be true
     end
     after do

@@ -18,11 +18,11 @@ class HandleCsvFromExcel
       csv
     end
 
-    def convert_excel_to_csv(excel_path)
+    def convert_excel(excel_path, to_csv: nil)
       raise '初期化パラーメータとして、Excelファイルのパスを指定してください' unless excel_path
+      raise '変換後のCSVファイルのパスを指定してください' unless to_csv
       raise "指定されたパスのファイルが見つかりません。[#{excel_path}]" unless File.exist?(excel_path)
-      out_csv_path = excel_path.gsub(/xls/, 'csv')
-      puts "out_csv_path => [#{convert_path_for_windows(out_csv_path)}]"
+      puts "out_csv_path => [#{convert_path_for_windows(to_csv)}]"
 
       begin
         excel = WIN32OLE.new('Excel.Application')
@@ -31,8 +31,7 @@ class HandleCsvFromExcel
 
         workbook = excel.workbooks.open(File.expand_path excel_path)
         first_sheet = workbook.sheets[1] # CSVに変換する対象は、最初のシート。
-        first_sheet.SaveAs(convert_path_for_windows(out_csv_path), Excel::XlCSV);
-          # first_sheet.SaveAs('c:\tmp\tmp-out.csv', Excel::XlCSV);
+        first_sheet.SaveAs(convert_path_for_windows(to_csv), Excel::XlCSV);
       rescue => ex
         print ex.message.encode('utf-8', 'windows-31j'), "\n"
       ensure
