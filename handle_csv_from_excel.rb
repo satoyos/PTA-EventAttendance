@@ -19,9 +19,13 @@ class HandleCsvFromExcel
     end
 
     def read_excel_file(excel_path)
-      out_csv_path = excel_path.gsub(/xls/, 'csv')
+      out_csv_path = default_csv_path_for(excel_path)
       convert_excel(excel_path, to_csv: out_csv_path)
       read_csv_file(out_csv_path)
+    end
+
+    def default_csv_path_for(excel_path)
+      excel_path.gsub(/xls/, 'csv')
     end
 
     def convert_excel(excel_path, to_csv: nil)
