@@ -29,7 +29,7 @@ class HandleCsvFromExcel
 
         WIN32OLE.const_load(excel, Excel)
 
-        workbook = excel.workbooks.open(File.expand_path excel_path)
+        workbook = excel.workbooks.open(convert_path_for_windows excel_path)
         first_sheet = workbook.sheets[1] # CSVに変換する対象は、最初のシート。
         first_sheet.SaveAs(convert_path_for_windows(to_csv), Excel::XlCSV);
       rescue => ex
