@@ -11,7 +11,7 @@ end
 describe 'HandleCsvFromExcel' do
   describe 'read_from_csv_file' do
     let(:csv){HandleCsvFromExcel.read_csv_file(TEST_CSV_PATH)}
-    it 'csvプロパティでCSVデータを保持する' do
+    it 'CSVデータを作成する' do
       expect(csv).not_to be nil
       expect(csv).to be_an CSV::Table
     end
@@ -36,7 +36,7 @@ describe 'HandleCsvFromExcel' do
 
   TEST_EXCEL_PATH = 'spec/out-2017-01-05-test.xls'
 
-  describe 'convert_excel_to_csv' do
+  describe 'convert_excel_to_csv', skip: true do
 
     before do
       clean_test_outflie_if_exist
@@ -47,6 +47,19 @@ describe 'HandleCsvFromExcel' do
     end
     after do
       clean_test_outflie_if_exist
+    end
+  end
+
+  describe 'read_excel_file' do
+    let(:csv){HandleCsvFromExcel.read_excel_file(TEST_EXCEL_PATH)}
+    it '適切なCSVデータを作成する' do
+      expect(csv).not_to be nil
+      expect(csv).to be_a CSV::Table
+      expect(csv.size).to be 4
+      csv[0].tap do |first|
+        expect(first['クラス']).to eq '中日'
+        expect(first['参加人数']).to eq '１名'
+      end
     end
   end
 end

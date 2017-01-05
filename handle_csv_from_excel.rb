@@ -18,6 +18,12 @@ class HandleCsvFromExcel
       csv
     end
 
+    def read_excel_file(excel_path)
+      out_csv_path = excel_path.gsub(/xls/, 'csv')
+      convert_excel(excel_path, to_csv: out_csv_path)
+      read_csv_file(out_csv_path)
+    end
+
     def convert_excel(excel_path, to_csv: nil)
       raise '初期化パラーメータとして、Excelファイルのパスを指定してください' unless excel_path
       raise '変換後のCSVファイルのパスを指定してください' unless to_csv
