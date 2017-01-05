@@ -95,7 +95,7 @@ class RecordsFixer
     raise '出欠登録レコードCSVのパスを引数で指定してください。' unless csv_path
     raise "指定されたパスのファイルが見つかりません。[#{csv_path}]" unless File.exist? csv_path
     recs = []
-    HandleCsvFromExcel.new(csv_path).csv.each do |row|
+    HandleCsvFromExcel.read_csv_file(csv_path).each do |row|
       recs << record_from_row(row)
     end
     recs

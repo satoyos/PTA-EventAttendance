@@ -3,18 +3,12 @@ require 'pp'
 
 TEST_CSV_PATH = 'spec/out-2016-06-02-test.csv' # セルの中に改行文字も入っているExcelから作った
 
-describe '初期化' do
-  let(:handler){HandleCsvFromExcel.new(TEST_CSV_PATH)}
-  specify 'should be a valid object' do
-    expect(handler).not_to be nil
-  end
+describe 'CSVファイルの読み込み' do
+  let(:csv){HandleCsvFromExcel.read_csv_file(TEST_CSV_PATH)}
   it 'csvプロパティでCSVデータを保持する' do
-    handler.csv.tap do |csv|
-      expect(csv).not_to be nil
-      expect(csv).to be_an CSV::Table
-    end
+    expect(csv).not_to be nil
+    expect(csv).to be_an CSV::Table
   end
-  let(:csv){handler.csv}
   it 'データの中に改行が入っていても、きちんと一つのデータとしてくれている。' do
     expect(csv.size).to be 4
   end
