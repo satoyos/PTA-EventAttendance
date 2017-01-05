@@ -51,8 +51,7 @@ class RecordsFixer
 
 
   def load_confirmed_data_and_check(in_json_path)
-    hashes_from_json = get_hashes_from(in_json_path)
-    raise 'CSVのデータ数が明らかに少ない！' if hashes_from_json.size > records.size
+    hashes_from_json = File.exist?(in_json_path) ? get_hashes_from(in_json_path) : []
     hashes_from_json.each_with_index do |hash, idx|
       check_record_with_saved_data(records[idx], hash[:applied_record], index: idx)
       student_hash = hash[:correct_student]
@@ -72,6 +71,12 @@ class RecordsFixer
       last_record ? last_record.presence : false
     }
     self
+  end
+
+  def self.create_fixer_for_excel(excel_path)
+    csv_path = HandleCsvFromExcel.default_csv_path_for(excel_path)
+    HandleCsvFromExcel.convert_excel(excel_path, to_csv: csv_path)
+    self.new(record_csv_path: csv_path)
   end
 
   private

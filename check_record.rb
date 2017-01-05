@@ -6,7 +6,8 @@ require_relative 'csv_out_by_course'
 include CsvOutByCourse
 
 # このファイルを、Excelデータが更新されるたびに書き換える
-RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-10-01.csv')
+# RECORD_CSV_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2016-10-01.csv')
+RECORD_EXCEL_PATH = File.join(ENV['RECORD_CSV_FOLDER'], 'out-2017-01-05.xls')
 
 # 生徒の名寄せチェック済みのデータファイル。
 # 新規に追加されたものについては、間違っているかもしれないので、
@@ -43,7 +44,8 @@ def attendee_number_for(record)
 end
 
 
-fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
+# fixer = RecordsFixer.new(record_csv_path: RECORD_CSV_PATH).
+fixer = RecordsFixer.create_fixer_for_excel(RECORD_EXCEL_PATH).
     set_peer_from_files_in('高2', files_path_json: class_member_files_list_json ).
     load_confirmed_data_and_check(confirm_history_json).
     guess_students.list_up_students_to_come.
